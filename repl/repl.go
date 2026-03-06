@@ -6,7 +6,7 @@ import (
 	"io"
 
 	"github.com/nayemmmmmmmmmm/yanma/lexer"
-	"github.com/nayemmmmmmmmmm/yanma/token"
+	"github.com/nayemmmmmmmmmm/yanma/parser"
 )
 
 const PROMPT = ">> "
@@ -23,10 +23,32 @@ func Start(in io.Reader, out io.Writer) {
 
 		line := scanner.Text()
 		l := lexer.New(line)
+		p := parser.New(l)
 
-		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-			fmt.Printf("%+v\n", tok)
+		program := p.ParseProgram()
+		if len(p.Errors()) != 0 {
+			printParserErrors(out, p.Errors())
+			continue
 		}
 
+		io.WriteString(out, program.String())
+		io.WriteString(out, "\n")
+
+	}
+}
+
+const YANMA_FACE = `
+   /\_/\ 
+  ( o.o )
+   > ^ <
+`
+
+func printParserErrors(out io.Writer, errors []string) {
+	io.WriteString(out, YANMA_FACE)
+	io.WriteString(out, "Woops! We ran into some parser problems!\n")
+	io.WriteString(out, " parser errors:\n")
+
+	for _, msg := range errors {
+		io.WriteString(out, "\t"+msg+"\n")
 	}
 }
