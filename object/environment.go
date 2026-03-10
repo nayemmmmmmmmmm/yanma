@@ -18,3 +18,4 @@ func (e *Environment) Set(name string, val Object) Object {
 	e.store[name] = val
 	return val
 }
+
