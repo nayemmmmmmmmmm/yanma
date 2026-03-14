@@ -1,6 +1,8 @@
 package evaluator
 
 import (
+	"fmt"
+
 	"github.com/nayemmmmmmmmmm/yanma/object"
 )
 
@@ -57,7 +59,7 @@ var builtins = map[string]*object.Builtin{
 			if len(arr.Elements) > 0 {
 				return arr.Elements[length-1]
 			}
-			
+
 			return NULL
 		},
 	},
@@ -77,7 +79,7 @@ var builtins = map[string]*object.Builtin{
 			if length > 0 {
 				newElements := make([]object.Object, length-1, length-1)
 				copy(newElements, arr.Elements[1:length])
-				return &object.Array{Elements:newElements}
+				return &object.Array{Elements: newElements}
 			}
 
 			return NULL
@@ -96,12 +98,21 @@ var builtins = map[string]*object.Builtin{
 			}
 			arr := args[0].(*object.Array)
 			length := len(arr.Elements)
-			
+
 			newElements := make([]object.Object, length-1, length-1)
 			copy(newElements, arr.Elements)
 			newElements[length] = args[1]
 
-			return &object.Array{Elements: newElements}			
+			return &object.Array{Elements: newElements}
+		},
+	},
+
+	"puts": &object.Builtin{
+		Fn: func(args ...object.Object) object.Object {
+			for _, arg := range args {
+				fmt.Println(arg.Inspect())
+			}
+			return NULL
 		},
 	},
 }
